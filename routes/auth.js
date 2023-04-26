@@ -21,11 +21,6 @@ routes.post(
   authController.register
 );
 
-routes.post(
-  "/products",
-  body("product_name")
-)
-
 routes.get("/user", authController.checkUser);
 
 module.exports = routes;

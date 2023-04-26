@@ -15,21 +15,29 @@ const verifyToken = async (req, res, next) => {
     }
   
     req.user = account;
+
+    if (!req.user) {
+      return res.status(401).json({
+        message: "Unauthorized"
+      });
+    }
+
     next();
-  } catch (error) {
+  } 
+  catch (error) {
     return res.status(500).json({
       message: error.message
     });
   }
 };
 
-const checkOwner = async (req, res, next) => {
-  try {
-    const { user } = req;
-  } catch (error) {
+// const checkOwner = async (req, res, next) => {
+//   try {
+//     const { user } = req;
+//   } catch (error) {
     
-  }
-}
+//   }
+// }
 
 module.exports = {
   verifyToken

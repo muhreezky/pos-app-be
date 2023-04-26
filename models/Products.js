@@ -18,6 +18,11 @@ function Products(sequelize) {
       allowNull: false
     },
 
+    image_url: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+
     description: {
       type: DataTypes.TEXT,
       defaultValue: "No Description for this item"
@@ -30,6 +35,16 @@ function Products(sequelize) {
 
     category_id: {
       type: DataTypes.INTEGER,
+      allowNull: false
+    },
+
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+
+    category_name: {
+      type: DataTypes.STRING,
       allowNull: false
     }
   });
