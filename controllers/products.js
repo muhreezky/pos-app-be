@@ -16,6 +16,9 @@ const productsController = {
         where: { category_id }
       });
       const { category_name } = category;
+      // console.log(req.file);
+      // console.log(req.files);
+      // console.log(req.body);
       const path = req.file.path.replace(/\\/g, "/").replace("static/", "");
       // console.log(req.headers.port);
       const image_url = `${req.protocol}://${req.headers.host}/${path}`;
@@ -79,8 +82,14 @@ const productsController = {
       const { product_id } = req.params;
       const { product_name, price, description, category_id } = req.body;
 
-      const path = req.file.path || "";
-      const imgUrl = `${req.protocol}://${req.headers.host}/${path
+      const category = await Category.findOne({
+        where: { category_id }
+      });
+
+      console.log(category.category_id);
+
+      const path = req.file?.path || "";
+      const imgUrl = path && `${req.protocol}://${req.headers.host}/${path
         .replace(/\\/g, "/")
         .replace("static/", "")}`;
       const product = await Product.findOne({
@@ -94,18 +103,17 @@ const productsController = {
         ""
       );
 
-      if (path) {
-        await fs.unlink(`${__dirname}/../static/${deletePath}`, (err) => {
-          if (err) return res.status(500).json({ message: err.message });
-        });
-      }
+      path && await fs.unlink(`${__dirname}/../static/${deletePath}`, (err) => {
+        if (err) return res.status(500).json({ message: err.message });
+      });
 
       await product.set({
         product_name: product_name || product.product_name,
         image_url: path ? imgUrl : product.image_url,
-        price: price || product.price,
+        price: price !== "0" ? price : product.price,
         description: description || product.description,
         category_id: category_id || product.category_id,
+        category_name: category.category_name
       });
 
       await product.save();
@@ -114,6 +122,7 @@ const productsController = {
         message: "Product Edited",
       });
     } catch (error) {
+      console.log(error);
       return res.status(500).json({
         message: error.message,
       });
@@ -188,15 +197,48 @@ const productsController = {
           order: [[orderby || "product_name", direction]],
         });
       }
-      console.log(products);
+      // console.log(products);
+      const pages = [];
+      const pagesCount = Math.ceil(products.count / limit);
+      for (let i = 1; i <= pagesCount; i++) {
+        if (!pagesCount) {
+          pages.push(1);
+          return;
+        }
+        pages.push(i);
+      }
 
-      return res.status(200).json(products);
+      console.log(pages);
+      return res.status(200).json({...products, pages});
     } catch (error) {
       return res.status(500).json({
         message: error.message,
       });
     }
   },
+
+  /**
+   * @param {import("express").Response} req
+   * @param {import("express").Request} res
+   */
+  searchProduct: async (req, res) => {
+    try {
+      const { keyword } = req.query;
+
+      const products = Product.findAndCountAll({
+        where: {
+          product_name: {
+            [Op.ilike]: `${keyword}%`
+          }
+        }
+      });
+
+      return res.status(200).json(products);
+    } 
+    catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  }
 };
 
 module.exports = productsController;

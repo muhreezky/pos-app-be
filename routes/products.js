@@ -15,13 +15,12 @@ const dataProduct = [
   body("category_id").isNumeric(),
 ];
 
+
 routes.post("/", ...dataProduct, productsController.addProduct);
-
 routes.put("/:product_id", ...dataProduct, productsController.editProduct);
-
-routes.get("/", verifyToken, productsController.viewProduct);
-
 routes.delete("/:product_id", verifyToken, productsController.deleteProduct);
+routes.get("/", verifyToken, productsController.viewProduct);
+routes.get("/search", verifyToken, productsController.searchProduct);
 
 routes.post(
   "/categories",
@@ -29,7 +28,15 @@ routes.post(
   body("category_name").isString(),
   categoryController.addCategory
 );
-
+routes.put(
+  "/categories/:category_id",
+  verifyToken,
+  body("category_name").isString(),
+  categoryController.editCategory
+);
 routes.get("/categories", verifyToken, categoryController.categoriesList);
+routes.get("/categories/:category_id", verifyToken, categoryController.viewCategory);
+routes.delete("/categories/:category_id", verifyToken, categoryController.removeCategory);
+
 
 module.exports = routes;
