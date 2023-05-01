@@ -64,7 +64,12 @@ const categoryController = {
    */
   categoriesList: async (req, res) => {
     try {
-      const data = await Category.findAll();
+      const { user_id } = req.user;
+      const data = await Category.findAll({
+        where: {
+          user_id
+        }
+      });
 
       console.log(data);
       return res.status(200).json(data);

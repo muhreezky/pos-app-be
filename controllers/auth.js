@@ -72,25 +72,21 @@ const authController = {
 
   checkUser: async function (req, res) {
     try {
-      const { authorization } = req.headers;
-      console.log(authorization);
-      const token = authorization.split(" ")[1];
-      const result = await jwt.verify(token, "pos_by_grup3");
+      const { user_id } = req.user;
 
       const findUser = await User.findOne({
         where: {
-          user_id: result.user_id,
+          user_id
         },
       });
 
-      if (!findUser || !result) {
+      if (!findUser) {
         return res.status(404).json({ message: "Account not found" });
       }
 
-      console.log(findUser);
-
-      return res.status(200).json({ user: findUser });
-    } catch (error) {
+      return res.status(200).json(findUser);
+    } 
+    catch (error) {
       return res.status(500).json({ message: error.message });
     }
   },

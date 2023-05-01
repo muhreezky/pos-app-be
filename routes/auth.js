@@ -21,6 +21,6 @@ routes.post(
   authController.register
 );
 
-routes.get("/user", authController.checkUser);
+routes.get("/user", verifyToken, authController.checkUser);
 
 module.exports = routes;

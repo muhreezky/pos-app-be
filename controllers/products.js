@@ -218,27 +218,49 @@ const productsController = {
   },
 
   /**
-   * @param {import("express").Response} req
-   * @param {import("express").Request} res
+   * @param {import("express").Request} req
+   * @param {import("express").Response} res
    */
   searchProduct: async (req, res) => {
     try {
-      const { keyword } = req.query;
+      const { keyword, category } = req.query;
 
-      const products = Product.findAndCountAll({
-        where: {
-          product_name: {
-            [Op.ilike]: `${keyword}%`
+      let products;
+
+      if (category) {
+        products = await Product.findAndCountAll({
+          where: {
+            [Op.and]: {
+              product_name: {
+                [Op.like]: `${keyword ? `%${keyword}%` : "%"}`
+              },
+              category_id: category
+            }
           }
-        }
-      });
+        });
+      } 
+      else {
+        products = await Product.findAndCountAll({
+          where: {
+            product_name: {
+              [Op.like]: `${keyword ? `%${keyword}%` : "%"}`
+            }
+          }
+        })
+      }
 
       return res.status(200).json(products);
     } 
     catch (error) {
       return res.status(500).json({ message: error.message });
     }
-  }
+  },
+
+  /**
+   * @param {import("express").Request} req
+   * @param {import("express").Response} res
+   */
+
 };
 
 module.exports = productsController;
