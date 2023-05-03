@@ -2,8 +2,9 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const db = require("./models");
 const cors = require("cors");
+require("dotenv").config();
 
-const port = 8000;
+const port = process.env.PORT;
 const app = express();
 const { authRoutes, productRoutes } = require("./routes");
 
