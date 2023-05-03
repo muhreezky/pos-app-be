@@ -14,10 +14,10 @@
     "dialect": "mysql"
   },
   "production": {
-    "username": "root",
-    "password": null,
-    "database": "pos_app",
-    "host": "127.0.0.1",
+    "username": "epiz_33095946",
+    "password": "KWm7P7mTuF",
+    "database": "epiz_33095946_pos_app",
+    "host": "sql110.epizy.com",
     "dialect": "mysql"
   }
 }
